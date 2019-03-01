@@ -1,13 +1,10 @@
-# vlabs-ledger-js
+# volentixjs
 
-[![Waffle.io - Columns and their card count](https://badge.waffle.io/Volentix/verto.svg?columns=all)](https://waffle.io/Volentix/verto)
-
-[![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 [![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)](https://choosealicense.com/licenses/mit/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![Open Source Love](https://badges.frapsoft.com/os/v3/open-source.svg?v=102)](https://github.com/ellerbrock/open-source-badge/)
 
-> A javascript client library for Volentix Ledger
+> A javascript library for Verto app
 
 This client allows full access for Javascript applications to the contracts provided by the Volentix
 ledger. In summary, those are:
@@ -47,7 +44,7 @@ Some terminology:
 
 First add the ledger client to your application:
 
-`npm add volentix-ledger`
+`npm install volentixjs`
 
 You must have access to an EOS instance with the [Volentix Ledger](https://github.com/Volentix/ledger)
 contracts deployed. Please see that project for deployment of the contracts.
@@ -55,13 +52,12 @@ contracts deployed. Please see that project for deployment of the contracts.
 ## Usage
 
 ```javascript
-import Ledger from "volentix-ledger";
+import Ledger from "volentixjs";
 
 // Point to a specific instance of the Ledger
 const ledger = new Ledger({
   httpEndpoint: "https://url-of-eos-node", // URL of EOS node
   chainId: "cf057bbfb72640471ff8a%90ba539c22df9f92470936cddc1ade0e2f2e7dc4f", // ID of a chain containing Volentix ledger
-  keyProvider: "EOS8TJpbWeQEoaMZMZzmo4SqC7DUucEUHRQJs1x7cXLcTqRhiJ7VF" // EOS account with the ledger contracts
 });
 
 // Retrieve the balance
@@ -213,9 +209,6 @@ Create a `.env` file in the root directory and set these variables:
 # The chain id of your running instance
 CHAIN_ID=
 
-# The EOS account which contains the Ledger contracts.
-KEY_PROVIDER=
-
 # http or https location of a nodeosd server providing a chain API.
 HTTP_ENDPOINT=
 
@@ -244,7 +237,7 @@ npm run test
 ## Maintainers
 
 - [@sylvaincormier](https://github.com/sylvaincormier)
-- [@shawnlauzon](https://github.com/shawnlauzon)
+- [@4ban](https://github.com/4ban)
 - [@realrhys](https://github.com/realrhys)
 
 ## Contribute
@@ -252,8 +245,6 @@ npm run test
 See [the contribute file](CONTRIBUTING.md)!
 
 PRs accepted.
-
-Small note: If editing the README, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 
 ## License
 
