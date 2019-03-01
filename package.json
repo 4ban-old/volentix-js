@@ -1,0 +1,36 @@
+{
+  "name": "volentixjs",
+  "version": "0.1.0",
+  "description": "A javascript library for verto app",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec  --require babel-register"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4ban/volentixjs.git"
+  },
+  "keywords": [
+    "eos",
+    "javascript"
+  ],
+  "author": "Volentix Labs Inc",
+  "license": "MIT",
+  "dependencies": {
+    "eosjs": "^16.0.9",
+    "moment": "^2.24.0",
+    "uuid": "^3.3.2"
+  },
+  "bugs": {
+    "url": "https://github.com/4ban/volentixjs/issues"
+  },
+  "homepage": "https://github.com/4ban/volentixjs#readme",
+  "devDependencies": {
+    "babel-register": "^6.26.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "dotenv": "^6.2.0",
+    "mocha": "^6.0.2",
+    "request": "^2.88.0"
+  }
+}
