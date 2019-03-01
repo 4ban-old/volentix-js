@@ -3,7 +3,7 @@ const expect = require('chai').expect
 const uuid = require('uuid')
 const Ledger = require('../src/index')
 
-describe('Ledger primary tests', function () {
+describe('Common tests', function () {
   this.timeout(10000000)
 
   const DISTRIBUTION_ACCOUNT = process.env.DISTRIBUTION_ACCOUNT
@@ -23,21 +23,6 @@ describe('Ledger primary tests', function () {
     ledger = new Ledger(config, LEDGER_ACCOUNT)
   })
 
-  it('Retrieves a balance from account', async function () {
-    const balance = await ledger.retrieveBalance({
-      account: TRUST_ACCOUNT,
-      wallet: TEST_WALLET
-    })
-    console.log('Account balance:', balance)
-    expect(balance)
-      .to.have.a.property('amount')
-      .that.is.a('number')
-      .that.is.above(0)
-    expect(balance)
-      .to.have.a.property('currency')
-      .that.equals('VTX')
-  })
-
   it('Retrieves a balance with empty parameters', async function () {
     const balance = await ledger.retrieveBalance({
       account: '',
@@ -51,6 +36,28 @@ describe('Ledger primary tests', function () {
     expect(balance)
       .to.have.a.property('currency')
       .that.equals('VTX')
+  })
+
+})
+
+describe('Wallet tests', function () {
+  this.timeout(10000000)
+
+  const DISTRIBUTION_ACCOUNT = process.env.DISTRIBUTION_ACCOUNT
+  const TRUST_ACCOUNT = process.env.TRUST_ACCOUNT
+  const LEDGER_ACCOUNT = process.env.LEDGER_ACCOUNT
+  const TEST_WALLET = process.env.TEST_WALLET
+  const TEST_EMPTY_WALLET = process.env.TEST_EMPTY_WALLET
+
+  let ledger = {}
+
+  before(function () {
+    const config = {
+      httpEndpoint: process.env.HTTP_ENDPOINT,
+      chainId: process.env.CHAIN_ID
+      // keyProvider: process.env.KEY_PROVIDER
+    }
+    ledger = new Ledger(config, LEDGER_ACCOUNT)
   })
 
   it('Retrieves a balance from wallet', async function () {
@@ -68,7 +75,7 @@ describe('Ledger primary tests', function () {
       .that.equals('VTX')
   })
 
-  it('Retrieves zero transactions from a new wallet', async function () {
+  it('Retrieves transactions from a new or empty wallet', async function () {
     const transactions = await ledger.retrieveTransactions({
       account: TRUST_ACCOUNT,
       wallet: TEST_EMPTY_WALLET
@@ -116,79 +123,66 @@ describe('Ledger primary tests', function () {
       .lengthOf(2)
   })
 
-  // TODO
-  // it("retrieves a transaction with a block number", async function() {
-  //   const testAmount = getRandomInt(1, 100);
-  //   const newTestWallet = uuid();
-  //   await ledger.recordTransfer({
-  //     from: {
-  //       account: DISTRIBUTION_ACCOUNT
-  //     },
-  //     to: {
-  //       account: TRUST_ACCOUNT,
-  //       wallet: newTestWallet
-  //     },
-  //     amount: testAmount
-  //   });
+  it('Retrieves a transaction with a block number', async function() {
+    const transactions = await ledger.retrieveTransactions({
+      account: TRUST_ACCOUNT,
+      wallet: TEST_WALLET
+    });
+    console.log("Block number:", transactions.transactions[0].Id)
+    expect(transactions.transactions[0].Id)
+      .to.be.a('number')
+      .which.is.greaterThan(1);
+  });
 
-  //   const transactions = await ledger.retrieveTransactions({
+  // async function getTestWalletBalance () {
+  //   const balance = await ledger.retrieveBalance({
   //     account: TRUST_ACCOUNT,
-  //     wallet: newTestWallet
-  //   });
+  //     wallet: TEST_WALLET
+  //   })
+  //   return balance.amount
+  // }
 
-  //   expect(transactions.transactions[0].blockNumber)
-  //     .to.be.a("number")
-  //     .which.is.greaterThan(1000);
-  // });
+  // async function getDistributionAccountBalance () {
+  //   const balance = await ledger.retrieveBalance({
+  //     account: DISTRIBUTION_ACCOUNT
+  //   })
+  //   return balance.amount
+  // }
+})
 
-  async function getTestWalletBalance () {
-    const balance = await ledger.retrieveBalance({
-      account: TRUST_ACCOUNT,
-      wallet: TEST_WALLET
-    })
-    return balance.amount
-  }
+describe('Account tests', function () {
+  this.timeout(10000000)
 
-  async function getDistributionAccountBalance () {
-    const balance = await ledger.retrieveBalance({
-      account: DISTRIBUTION_ACCOUNT
-    })
-    return balance.amount
-  }
+  const DISTRIBUTION_ACCOUNT = process.env.DISTRIBUTION_ACCOUNT
+  const TRUST_ACCOUNT = process.env.TRUST_ACCOUNT
+  const LEDGER_ACCOUNT = process.env.LEDGER_ACCOUNT
+  const TEST_WALLET = process.env.TEST_WALLET
+  const TEST_EMPTY_WALLET = process.env.TEST_EMPTY_WALLET
 
-  async function clearTestWallet() {
-    // Move any balance from the trust account back to the distribution account
-    const balance = await ledger.retrieveBalance({
-      account: TRUST_ACCOUNT,
-      wallet: TEST_WALLET
-    })
-  }
+  let ledger = {}
 
-  async function clearTestWallet() {
-    const balance = await ledger.retrieveBalance({
-      account: TRUST_ACCOUNT,
-      wallet: TEST_WALLET
-    })
-    if (balance.amount === 0) {
-      return Promise.resolve()
+  before(function () {
+    const config = {
+      httpEndpoint: process.env.HTTP_ENDPOINT,
+      chainId: process.env.CHAIN_ID
+      // keyProvider: process.env.KEY_PROVIDER
     }
-    return ledger.recordTransfer({
-      from: {
-        account: TRUST_ACCOUNT,
-        wallet: TEST_WALLET
-      },
-      to: {
-        account: DISTRIBUTION_ACCOUNT
-      },
-      amount: balance.amount
-    })
-  }
+    ledger = new Ledger(config, LEDGER_ACCOUNT)
+  })
 
-  /**
-   * Returns a random integer between min (inclusive) and max (inclusive)
-   * Using Math.round() will give you a non-uniform distribution!
-   */
-  function getRandomInt (min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min
-  }
+  it('Retrieves a balance from account', async function () {
+    const balance = await ledger.retrieveBalance({
+      account: TRUST_ACCOUNT,
+      wallet: ''
+    })
+    console.log('Account balance:', balance)
+    expect(balance)
+      .to.have.a.property('amount')
+      .that.is.a('number')
+      .that.is.above(0)
+    expect(balance)
+      .to.have.a.property('currency')
+      .that.equals('VTX')
+  })
+
 })
