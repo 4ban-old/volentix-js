@@ -4,7 +4,7 @@
   "description": "A javascript library for verto app",
   "main": "src/index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec  --require babel-register",
+    "test": "nyc ./node_modules/.bin/mocha --reporter spec  --require babel-register",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "repository": {
