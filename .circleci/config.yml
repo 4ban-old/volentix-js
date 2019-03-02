@@ -18,6 +18,8 @@ jobs:
           TAG=0.1.$CIRCLE_BUILD_NUM
           sed -i -e 's/0.1.0/'$TAG'/g' package.json
           npm install
+          npm test
+          npm run report-coverage
           npm publish
       - save_cache:
           paths:
