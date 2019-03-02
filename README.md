@@ -1,5 +1,6 @@
 # volentixjs
 
+[![codecov](https://codecov.io/gh/4ban/volentixjs/branch/master/graph/badge.svg)](https://codecov.io/gh/4ban/volentixjs)
 [![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)](https://choosealicense.com/licenses/mit/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![Open Source Love](https://badges.frapsoft.com/os/v3/open-source.svg?v=102)](https://github.com/ellerbrock/open-source-badge/)

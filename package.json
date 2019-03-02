@@ -4,7 +4,8 @@
   "description": "A javascript library for verto app",
   "main": "src/index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec  --require babel-register"
+    "test": "./node_modules/.bin/mocha --reporter spec  --require babel-register",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "repository": {
     "type": "git",
@@ -29,8 +30,10 @@
     "babel-register": "^6.26.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "codecov": "^3.2.0",
     "dotenv": "^6.2.0",
     "mocha": "^6.0.2",
+    "nyc": "^13.3.0",
     "request": "^2.88.0"
   }
 }

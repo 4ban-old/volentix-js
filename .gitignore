@@ -5,7 +5,9 @@ test/config.json.old
 .env
 .vscode
 .idea
-
+coverage.lcov
+.DS_Store
+test/.DS_Store
 # Logs
 logs
 *.log
