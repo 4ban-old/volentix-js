@@ -19,7 +19,7 @@ jobs:
           sed -i -e 's/0.1.0/'$TAG'/g' package.json
           npm install
           npm test
-          npm run report-coverage
+          npm run coverage
           npm publish
       - save_cache:
           paths:

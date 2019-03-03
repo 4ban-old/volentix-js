@@ -53,8 +53,7 @@ class Ledger {
           if (output.rows[i].toAccount.localeCompare(account) == 0) {
             amount += parseFloat(output.rows[i].amount)
           }
-        }
-        else {
+        } else {
           if (output.rows[i].sToKey.localeCompare(wallet) == 0) {
             amount += parseFloat(output.rows[i].amount)
           }
@@ -145,8 +144,7 @@ class Ledger {
           if (output.rows[i].toAccount.localeCompare(account) == 0) {
             transactions.push(output.rows[i]);
           }
-        }
-        else {
+        } else {
           if (output.rows[i].sToKey.localeCompare(wallet) == 0) {
             transactions.push(output.rows[i]);
           }
