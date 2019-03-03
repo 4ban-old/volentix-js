@@ -65,7 +65,7 @@ class Ledger {
       amount,
       currency: 'VTX'
     }
-    vtxledger, vtxledger, entry
+    // vtxledger, vtxledger, entry
   }
 
   async recordTransfer ({ from, to, amount, comment }) {
@@ -160,7 +160,7 @@ class Ledger {
     return {
       transactions
     }
-    vtxledger, vtxledger, entry
+    // vtxledger, vtxledger, entry
   }
 }
 
