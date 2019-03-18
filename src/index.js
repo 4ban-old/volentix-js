@@ -10,8 +10,7 @@ class VEOS {
         expireInSeconds: 60,
         verbose: false,
         debug: false,
-        sign: true,
-        // authorization: this.LEDGER_ACCOUNT_NAME + '@active'
+        sign: true
       })
     )
   }
@@ -42,6 +41,28 @@ class VEOS {
       })
     })
   }
+
+  async transferToken(contractName = 'eosio.token', from, to, quantity, memo = '', keyProvider) {
+    const tr = await this.eos.transaction({
+      actions: [{
+        account: contractName,
+        name: 'transfer',
+        authorization: [{
+          actor: from,
+          permission: 'active'
+        }],
+        data: {
+          from: from,
+          to: to,
+          quantity: quantity,
+          memo: memo
+        }
+      }]
+    }, { keyProvider })
+    return tr.transaction
+  }
+
+
 }
 
 module.exports = VEOS
