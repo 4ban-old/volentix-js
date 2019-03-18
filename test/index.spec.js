@@ -1,143 +1,99 @@
 require('dotenv').config()
-const Ledger = require('../src/index')
+const VEOS = require('../src/index')
 
-const DISTRIBUTION_ACCOUNT = process.env.DISTRIBUTION_ACCOUNT
-const TRUST_ACCOUNT = process.env.TRUST_ACCOUNT
-const LEDGER_ACCOUNT = process.env.LEDGER_ACCOUNT
+const CHAIN_ID = process.env.CHAIN_ID
+const TEST_HTTP_ENDPOINT = process.env.TEST_HTTP_ENDPOINT
+const MAIN_HTTP_ENDPOINT = process.env.MAIN_HTTP_ENDPOINT
+const TEST_LEDGER_ACCOUNT = process.env.TEST_LEDGER_ACCOUNT
 const TEST_WALLET = process.env.TEST_WALLET
 const TEST_EMPTY_WALLET = process.env.TEST_EMPTY_WALLET
+const TEST_PRIVATE_KEY_VALID = process.env.TEST_PRIVATE_KEY_VALID
+const TEST_PRIVATE_KEY_INVALID = process.env.TEST_PRIVATE_KEY_INVALID
+const TEST_PUBKEY = process.env.TEST_PUBKEY
 
-describe('Common tests', function () {
-  let ledger = {}
-  let timeout = 5000
+describe('TESTNET', function () {
+  describe('Utilities', function () {
+    let veos = {}
+    let timeout = 5000
 
-  beforeAll(() => {
-    const config = {
-      httpEndpoint: process.env.HTTP_ENDPOINT,
-      chainId: process.env.CHAIN_ID
-    }
-    ledger = new Ledger(config, LEDGER_ACCOUNT)
+    beforeAll(() => {
+      const config = {
+        httpEndpoint: TEST_HTTP_ENDPOINT,
+        chainId: CHAIN_ID
+      }
+      veos = new VEOS(config)
+    })
+
+    test('Private key is valid', async () => {
+      const valid = await veos.isPrivateKeyValid(TEST_PRIVATE_KEY_VALID)
+      // console.log('Valid private key:', valid)
+      expect(valid).toEqual(true)
+    }, timeout)
+
+    test('Private key is invalid', async () => {
+      const valid = await veos.isPrivateKeyValid(TEST_PRIVATE_KEY_INVALID)
+      // console.log('Invalid private key:', valid)
+      expect(valid).toEqual(false)
+    }, timeout)
+
+    test('From private to public', async () => {
+      const pubKey = await veos.privateToPublic(TEST_PRIVATE_KEY_VALID)
+      // console.log('Public key:', pubKey)
+      expect(pubKey).toEqual('EOS8kJexf4qWCXaF6bfssF5HBaASRrr3NGW2PmERC6WDUafRc1FKn')
+    }, timeout)
+
+    test('Get accounts from public key', async () => {
+      const accounts = await veos.getAccountsFromKey(TEST_PUBKEY)
+      let account = accounts.account_names[0]
+      // console.log('Accounts:', account)
+      expect(account).toEqual('volentixrhys')
+    }, timeout)
   })
+  describe('Account balance', function () {
+    let veos = {}
+    let timeout = 5000
 
-  test('Retreive a balance with empty parameters', async () => {
-    const balance = await ledger.retrieveBalance({
-      account: '',
-      wallet: ''
+    beforeAll(() => {
+      const config = {
+        httpEndpoint: TEST_HTTP_ENDPOINT,
+        chainId: CHAIN_ID
+      }
+      veos = new VEOS(config)
     })
-    // console.log('Account balance with empty parameters:', balance)
-    expect(balance).toHaveProperty('amount', 0)
-    expect(balance).toHaveProperty('currency', 'VTX')
-  }, timeout)
-})
 
-describe('Wallet tests', function () {
-  let ledger = {}
-  let timeout = 5000
+    test('Retreive an EOS balance for volentixrhys. Specify contract name', async () => {
+      const balance = await veos.getAccountBalance(
+        'volentixrhys',
+        'eosio.token'
+      )
+      let amount = parseFloat(balance[0].split(' ')[0])
+      let currency = balance[0].split(' ')[1]
+      // console.log('Account balance:', balance[0].split(' ')[0])
+      expect(amount).toBeGreaterThan(0)
+      expect(currency).toEqual('EOS')
+    }, timeout)
 
-  beforeAll(function () {
-    const config = {
-      httpEndpoint: process.env.HTTP_ENDPOINT,
-      chainId: process.env.CHAIN_ID
-    }
-    ledger = new Ledger(config, LEDGER_ACCOUNT)
+    test('Retreive an EOS balance for volentixrhys. Without contract name', async () => {
+      const balance = await veos.getAccountBalance(
+        'volentixrhys'
+      )
+      let amount = parseFloat(balance[0].split(' ')[0])
+      let currency = balance[0].split(' ')[1]
+      // console.log('Account balance:', balance[0].split(' ')[0])
+      expect(amount).toBeGreaterThan(0)
+      expect(currency).toEqual('EOS')
+    }, timeout)
+
+    test('Retreive an VTX balance for volentixrhys.', async () => {
+      const balance = await veos.getAccountBalance(
+        'volentixrhys',
+        'volentixgsys'
+      )
+      let amount = parseFloat(balance[0].split(' ')[0])
+      let currency = balance[0].split(' ')[1]
+      // console.log('Account balance:', balance[0].split(' ')[0])
+      expect(amount).toBeGreaterThan(0)
+      expect(currency).toEqual('VTX')
+    }, timeout)
   })
-
-  test('Retrieves a balance from wallet', async function () {
-    const balance = await ledger.retrieveBalance({
-      account: DISTRIBUTION_ACCOUNT,
-      wallet: TEST_WALLET
-    })
-    // console.log(balance)
-    expect(balance).toHaveProperty('amount')
-    expect(balance).toHaveProperty('currency', 'VTX')
-    expect(balance.amount).toBeGreaterThan(0)
-  }, timeout)
-
-  test('Retrieves transactions from a new or empty wallet', async function () {
-    const transactions = await ledger.retrieveTransactions({
-      account: TRUST_ACCOUNT,
-      wallet: TEST_EMPTY_WALLET
-    })
-    // console.log('Transactions empty:', transactions.transactions.length)
-    expect(transactions).toHaveProperty('transactions')
-    expect(transactions.transactions.length).toEqual(0)
-  }, timeout)
-
-  test('Retrieves transactions from a wallet', async function () {
-    const transactions = await ledger.retrieveTransactions({
-      account: TRUST_ACCOUNT,
-      wallet: TEST_WALLET
-    })
-    // console.log('Transactions:', transactions.transactions.length)
-    expect(transactions).toHaveProperty('transactions')
-    expect(transactions.transactions.length).toBeGreaterThan(0)
-  }, timeout)
-
-  test('Retrieves 1 transaction from a wallet when requesting only 1', async function () {
-    const transactions = await ledger.retrieveTransactions({
-      account: TRUST_ACCOUNT,
-      wallet: TEST_WALLET,
-      limit: 1
-    })
-    expect(transactions).toHaveProperty('transactions')
-    expect(transactions.transactions.length).toEqual(1)
-  }, timeout)
-
-  test('Retrieves 2 transactions from a wallet when requesting only 2', async function () {
-    const transactions = await ledger.retrieveTransactions({
-      account: TRUST_ACCOUNT,
-      wallet: TEST_WALLET,
-      limit: 2
-    })
-    expect(transactions).toHaveProperty('transactions')
-    expect(transactions.transactions.length).toEqual(2)
-  }, timeout)
-
-  test('Retrieves a transaction with a block number', async function() {
-    const transactions = await ledger.retrieveTransactions({
-      account: TRUST_ACCOUNT,
-      wallet: TEST_WALLET
-    });
-    // console.log("Block number:", transactions.transactions[0].Id)
-    expect(transactions.transactions[0].Id).toBeGreaterThan(1)
-  }, timeout)
-
-//   // async function getTestWalletBalance () {
-//   //   const balance = await ledger.retrieveBalance({
-//   //     account: TRUST_ACCOUNT,
-//   //     wallet: TEST_WALLET
-//   //   })
-//   //   return balance.amount
-//   // }
-
-//   // async function getDistributionAccountBalance () {
-//   //   const balance = await ledger.retrieveBalance({
-//   //     account: DISTRIBUTION_ACCOUNT
-//   //   })
-//   //   return balance.amount
-//   // }
-})
-
-describe('Account tests', function () {
-  let ledger = {}
-  let timeout = 5000
-
-  beforeAll(function () {
-    const config = {
-      httpEndpoint: process.env.HTTP_ENDPOINT,
-      chainId: process.env.CHAIN_ID
-    }
-    ledger = new Ledger(config, LEDGER_ACCOUNT)
-  })
-
-  test('Retrieves a balance from account', async function () {
-    const balance = await ledger.retrieveBalance({
-      account: TRUST_ACCOUNT,
-      wallet: ''
-    })
-    // console.log('Account balance:', balance)
-    expect(balance).toHaveProperty('amount')
-    expect(balance.amount).toBeGreaterThan(0)
-    expect(balance).toHaveProperty('currency', 'VTX')
-  }, timeout)
 })
