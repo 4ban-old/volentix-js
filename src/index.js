@@ -42,7 +42,7 @@ class VEOS {
     })
   }
 
-  async transferToken(contractName = 'eosio.token', from, to, quantity, memo = '', keyProvider) {
+  async transferToken (contractName = 'eosio.token', from, to, quantity, memo = '', keyProvider) {
     const tr = await this.eos.transaction({
       actions: [{
         account: contractName,
@@ -62,6 +62,72 @@ class VEOS {
     return tr.transaction
   }
 
+  async getTransactions (accountName) {
+    return new Promise(async (resolve, reject) => {
+      const trx = []
+      const actions = (await this.eos.getActions(accountName)).actions
+      // in case you solely want the standard transactions
+      // .filter(a => a.action_trace.act.name === 'transfer')
+      // actions.filter(a => a.action_trace.act.name === 'transfer')
+      actions.map(a => {
+        const { from, memo, quantity, to, payer, quant, receiver } = a.action_trace.act.data
+        const { bytes, stake_cpu_quantity: stakeCpuQuantity, stake_net_quantity: stakeNetQuantity, transfer } = a.action_trace.act.data
+        const { name, data } = a.action_trace.act
+        let obj = {}
+        if (name === 'transfer') {
+          obj = {
+            ...obj,
+            to,
+            from,
+            quantity: this.toFloat(quantity),
+            memo
+          }
+        } else if (name === 'buyram') obj = {
+          ...obj,
+          payer,
+          quant: this.toFloat(quant),
+          receiver
+        }
+        else if (name === 'buyrambytes') obj = {
+          ...obj,
+          payer,
+          receiver,
+          bytes
+        }
+        else if (name === 'delegatebw') {
+          obj = {
+            ...obj,
+            stake_cpu_quantity: this.toFloat(stakeCpuQuantity), // unit in EOS
+            stake_net_quantity: this.toFloat(stakeNetQuantity), // unit in EOS
+            transfer
+          }
+        } else if (name === 'newaccount') {
+          obj = {
+            ...obj,
+            creator: data.creator,
+            name: data.name,
+            key: data.active.keys[0].key
+          }
+        } else {
+          // https://eosio.stackexchange.com/questions/1831/getactionsaccountname-possible-names-actions-action-trace-act-name?noredirect=1#comment1698_1831
+          // if not any of the mainly used transaction types, return whole object
+          return actions
+        }
+        obj = {
+          ...obj,
+          transaction_ID: a.action_trace.trx_id,
+          block_time: a.block_time,
+          block_num: a.block_num,
+          trx_type: name
+        }
+        trx.push(obj)
+        return a.action_trace.act
+      })
+      // console.log(trx);
+      // console.log(actions);  //unfiltered data;
+      resolve(trx)
+    })
+  }
 
 }
 

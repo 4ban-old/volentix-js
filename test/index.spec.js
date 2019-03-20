@@ -96,78 +96,25 @@ describe('TESTNET', function () {
       expect(currency).toEqual('VTX')
     }, timeout)
   })
+
+  describe('Transactions', function () {
+    let veos = {}
+    let timeout = 5000
+
+    beforeAll(() => {
+      const config = {
+        httpEndpoint: TEST_HTTP_ENDPOINT,
+        chainId: CHAIN_ID
+      }
+      veos = new VEOS(config)
+    })
+
+    test('Retreive transaction history for account', async () => {
+      const transactions = await veos.getTransactions('volentixrhys')
+      // let amount = parseFloat(balance[0].split(' ')[0])
+      // let currency = balance[0].split(' ')[1]
+      // console.log('transactions:', transactions)
+      expect(transactions.length).toBeGreaterThan(0)
+    }, timeout)
+  })
 })
-
-// describe('Transactions', function () {
-//   let veos = {}
-//   let timeout = 5000
-
-//   beforeAll(() => {
-//     const config = {
-//       httpEndpoint: TEST_HTTP_ENDPOINT,
-//       chainId: CHAIN_ID
-//     }
-//     veos = new VEOS(config)
-//   })
-
-//   test('Retreive an EOS balance for vlabaccount1.', async () => {
-//     const transactions = await veos.getOutgoingTransactionsP('volentixrhys')
-//     // let amount = parseFloat(balance[0].split(' ')[0])
-//     // let currency = balance[0].split(' ')[1]
-//     console.log('transactions:', transactions)
-//     // expect(amount).toBeGreaterThan(0)
-//     // expect(currency).toEqual('EOS')
-//   }, timeout)
-// })
-
-// describe('Accounts: vlabaccount1 and vlabaccount2', function () {
-//   let veos = {}
-//   let timeout = 5000
-
-//   beforeAll(() => {
-//     const config = {
-//       httpEndpoint: TEST_HTTP_ENDPOINT,
-//       chainId: CHAIN_ID
-//     }
-//     veos = new VEOS(config)
-//   })
-
-//   test('Retreive an EOS balance for vlabaccount1.', async () => {
-//     const balance = await veos.getAccountBalance(
-//       'vlabaccount1',
-//       'eosio.token'
-//     )
-//     // let amount = parseFloat(balance[0].split(' ')[0])
-//     // let currency = balance[0].split(' ')[1]
-//     console.log('Account balance EOS:', balance)
-//     // expect(amount).toBeGreaterThan(0)
-//     // expect(currency).toEqual('EOS')
-//   }, timeout)
-
-//   test('Retreive an VTX balance for vlabaccount1.', async () => {
-//     const balance = await veos.getAccountBalance(
-//       'vlabaccount1',
-//       'volentixgsys'
-//     )
-//     // let amount = parseFloat(balance[0].split(' ')[0])
-//     // let currency = balance[0].split(' ')[1]
-//     console.log('Account balance VTX:', balance)
-//     // expect(amount).toBeGreaterThan(0)
-//     // expect(currency).toEqual('VTX')
-//   }, timeout)
-
-//   test('Transaction send. EOS.', async () => {
-//     const transaction = await veos.transferToken(
-//       'eosio.token',
-//       'vlabaccount1',
-//       'vlabaccount2',
-//       '0.1345 EOS',
-//       'memo1'
-//     )
-//     // let amount = parseFloat(balance[0].split(' ')[0])
-//     // let currency = balance[0].split(' ')[1]
-//     console.log('Account balance VTX:', transaction)
-//     // expect(amount).toBeGreaterThan(0)
-//     // expect(currency).toEqual('VTX')
-//   }, timeout)
-// })
