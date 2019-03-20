@@ -97,24 +97,24 @@ describe('TESTNET', function () {
     }, timeout)
   })
 
-  describe('Transactions', function () {
-    let veos = {}
-    let timeout = 5000
+  // describe('Transactions', function () {
+  //   let veos = {}
+  //   let timeout = 5000
 
-    beforeAll(() => {
-      const config = {
-        httpEndpoint: TEST_HTTP_ENDPOINT,
-        chainId: CHAIN_ID
-      }
-      veos = new VEOS(config)
-    })
+  //   beforeAll(() => {
+  //     const config = {
+  //       httpEndpoint: TEST_HTTP_ENDPOINT,
+  //       chainId: CHAIN_ID
+  //     }
+  //     veos = new VEOS(config)
+  //   })
 
-    test('Retreive transaction history for account', async () => {
-      const transactions = await veos.getTransactions('volentixrhys')
-      // let amount = parseFloat(balance[0].split(' ')[0])
-      // let currency = balance[0].split(' ')[1]
-      // console.log('transactions:', transactions)
-      expect(transactions.length).toBeGreaterThan(0)
-    }, timeout)
-  })
+  //   test('Retreive transaction history for account', async () => {
+  //     const transactions = await veos.getTransactions('volentixrhys')
+  //     // let amount = parseFloat(balance[0].split(' ')[0])
+  //     // let currency = balance[0].split(' ')[1]
+  //     // console.log('transactions:', transactions)
+  //     expect(transactions.length).toBeGreaterThan(0)
+  //   }, timeout)
+  // })
 })
